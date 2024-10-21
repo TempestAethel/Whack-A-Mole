@@ -193,7 +193,7 @@
             <button id="reset-button">Reset Game</button>
         </div>
     </div>
-    <div class="toast" id="toast">Time is up! Your score: <span id="final-score"></span></div>
+    <div class="toast" id="toast"></div>
     <div class="modal" id="info-modal">
         <h2>Game Instructions</h2>
         <p>Score points by clicking on the active tiles.</p>
@@ -214,7 +214,6 @@
         const menu = document.getElementById('menu');
         const game = document.getElementById('game');
         const toast = document.getElementById('toast');
-        const finalScoreElement = document.getElementById('final-score');
         const scoreMultiplierElement = document.getElementById('score-multiplier');
         const infoModal = document.getElementById('info-modal');
         const closeModalButton = document.getElementById('close-modal');
@@ -274,8 +273,7 @@
         }
 
         function showToast(message) {
-            finalScoreElement.textContent = score;
-            toast.textContent = message;
+            toast.textContent = message + ' Your score: ' + score;
             toast.style.opacity = 1;
             setTimeout(() => {
                 toast.style.opacity = 0;
@@ -303,7 +301,7 @@
                     timerElement.textContent = timeLeft;
                 } else {
                     clearInterval(tileInterval);
-                    showToast('Time is up! Your score: ');
+                    showToast('Time is up!');
                     saveHighestScore();
                     resetGame();
                 }
