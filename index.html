@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -22,7 +21,6 @@
         }
         .board {
             display: grid;
-            grid-template-columns: repeat(4, 100px);
             grid-gap: 10px;
             margin-bottom: 20px;
         }
@@ -52,40 +50,69 @@
         .menu.active, .game.active {
             display: block;
         }
-        #play-button {
+        #play-button, #reset-button {
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #00cc00;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
+        #play-button {
+            background-color: #00cc00; /* Green color for play button */
+        }
         #play-button:hover {
-            background-color: #00ff00;
+            background-color: #00ff00; /* Lighter green on hover */
+        }
+        #reset-button {
+            background-color: #ff4500; /* Red color for reset button */
+        }
+        #reset-button:hover {
+            background-color: #ff6347; /* Lighter red on hover */
         }
         #timer {
             font-size: 24px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             margin-bottom: 20px;
         }
-        #reset-button {
-            padding: 10px 20px;
+        #grid-size {
+            margin-bottom: 10px;
+            padding: 10px;
             font-size: 16px;
-            background-color: #ff4500;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
         }
-        #reset-button:hover {
-            background-color: #ff6347;
+        @keyframes scoreAnimation {
+            animation: scoreAnim 0.5s forwards;
+        }
+        @keyframes wrongClickAnimation {
+            animation: wrongAnim 0.5s forwards;
+        }
+        @keyframes scoreAnim {
+            from { transform: scale(1); }
+            to { transform: scale(1.2); color: #00ff00; }
+        }
+        @keyframes wrongAnim {
+            from { transform: scale(1); }
+            to { transform: scale(0.8); color: #ff0000; }
         }
     </style>
 </head>
 <body>
     <h1>Whack-a-Mole!</h1>
     <div class="menu active" id="menu">
-        <button id="play-button">Play</button>
+        <div class="controls">
+            <select id="grid-size">
+                <option value="4">4x4</option>
+                <option value="5">5x5</option>
+                <option value="6">6x6</option>
+            </select>
+            <button id="play-button">Play</button>
+        </div>
     </div>
     <div class="game" id="game">
         <div class="score">Score: <span id="score">0</span></div>
@@ -101,15 +128,18 @@
         const timerElement = document.getElementById('time');
         const playButton = document.getElementById('play-button');
         const resetButton = document.getElementById('reset-button');
+        const gridSizeSelect = document.getElementById('grid-size');
         const menu = document.getElementById('menu');
         const game = document.getElementById('game');
         let score = 0;
         let timeLeft = 30; // 30 seconds for the game
         let moleInterval;
+        let boardSize = parseInt(gridSizeSelect.value);
 
         function createBoard() {
             boardElement.innerHTML = '';
-            for (let i = 0; i < 16; i++) {
+            boardElement.style.gridTemplateColumns = `repeat(${boardSize}, 100px)`;
+            for (let i = 0; i < boardSize * boardSize; i++) {
                 const mole = document.createElement('div');
                 mole.className = 'mole';
                 mole.addEventListener('click', () => whackMole(mole));
@@ -122,6 +152,11 @@
                 score++;
                 scoreElement.textContent = score;
                 mole.classList.remove('active');
+                mole.classList.add('scoreAnimation');
+                setTimeout(() => mole.classList.remove('scoreAnimation'), 500);
+            } else {
+                mole.classList.add('wrongClickAnimation');
+                setTimeout(() => mole.classList.remove('wrongClickAnimation'), 500);
             }
         }
 
@@ -133,6 +168,8 @@
         }
 
         function startGame() {
+            boardSize = parseInt(gridSizeSelect.value);
+            createBoard();
             menu.classList.remove('active');
             game.classList.add('active');
             score = 0;
@@ -140,7 +177,6 @@
             scoreElement.textContent = score;
             timerElement.textContent = timeLeft;
 
-            createBoard();
             moleInterval = setInterval(() => {
                 showMole();
                 if (timeLeft > 0) {
@@ -166,6 +202,7 @@
 
         playButton.addEventListener('click', startGame);
         resetButton.addEventListener('click', resetGame);
+        gridSizeSelect.addEventListener('change', createBoard);
 
         createBoard();
     </script>
