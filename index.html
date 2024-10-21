@@ -188,7 +188,7 @@
         <div class="score">Score: <span id="score">0</span></div>
         <div id="timer">Time: <span id="time">30</span> seconds</div>
         <div class="board" id="board"></div>
-        <div class="high-score">Highest Score: <span id="highest-score">0</span></div>
+        <div class="high-score">Highest Score: <span id="highest-score">0</span> (Mode: <span id="highest-mode">N/A</span>)</div>
         <div class="reset-container" style="display: flex; justify-content: center;">
             <button id="reset-button">Reset Game</button>
         </div>
@@ -219,7 +219,7 @@
         const closeModalButton = document.getElementById('close-modal');
         const infoButton = document.getElementById('info-button');
         const highestScoreElement = document.getElementById('highest-score');
-
+        const highestModeElement = document.getElementById('highest-mode');
         let score = 0;
         let timeLeft = 30; // 30 seconds for the game
         let tileInterval;
@@ -227,10 +227,12 @@
         let tileCount = parseInt(tileCountSelect.value);
         let scoreMultiplier = 1;
 
-        // Load highest score from local storage
+        // Load highest score and mode from local storage
         function loadHighestScore() {
             const highestScore = localStorage.getItem('highestScore') || 0;
+            const highestMode = localStorage.getItem('highestMode') || "N/A";
             highestScoreElement.textContent = highestScore;
+            highestModeElement.textContent = highestMode;
         }
 
         function createBoard() {
@@ -312,6 +314,7 @@
             const highestScore = localStorage.getItem('highestScore') || 0;
             if (score > highestScore) {
                 localStorage.setItem('highestScore', score);
+                localStorage.setItem('highestMode', tileCount + ' Tiles');
                 loadHighestScore();
             }
         }
