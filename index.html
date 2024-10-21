@@ -57,7 +57,7 @@
             transform: scale(1.1);
             background-color: #ff0000;
         }
-        .score, #timer {
+        .score, #timer, .high-score {
             font-size: 24px;
             text-align: center;
         }
@@ -76,6 +76,7 @@
             cursor: pointer;
             transition: background-color 0.3s, box-shadow 0.3s;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            margin: 5px;
         }
         #play-button {
             background-color: #00cc00;
@@ -187,6 +188,7 @@
         <div class="score">Score: <span id="score">0</span></div>
         <div id="timer">Time: <span id="time">30</span> seconds</div>
         <div class="board" id="board"></div>
+        <div class="high-score">Highest Score: <span id="highest-score">0</span></div>
         <div class="reset-container" style="display: flex; justify-content: center;">
             <button id="reset-button">Reset Game</button>
         </div>
@@ -207,22 +209,30 @@
         const timerElement = document.getElementById('time');
         const playButton = document.getElementById('play-button');
         const resetButton = document.getElementById('reset-button');
-        const infoButton = document.getElementById('info-button');
-        const closeModalButton = document.getElementById('close-modal');
         const gridSizeSelect = document.getElementById('grid-size');
         const tileCountSelect = document.getElementById('tile-count');
         const menu = document.getElementById('menu');
         const game = document.getElementById('game');
         const toast = document.getElementById('toast');
         const finalScoreElement = document.getElementById('final-score');
-        const infoModal = document.getElementById('info-modal');
         const scoreMultiplierElement = document.getElementById('score-multiplier');
+        const infoModal = document.getElementById('info-modal');
+        const closeModalButton = document.getElementById('close-modal');
+        const infoButton = document.getElementById('info-button');
+        const highestScoreElement = document.getElementById('highest-score');
+
         let score = 0;
         let timeLeft = 30; // 30 seconds for the game
         let tileInterval;
         let boardSize = parseInt(gridSizeSelect.value);
         let tileCount = parseInt(tileCountSelect.value);
         let scoreMultiplier = 1;
+
+        // Load highest score from local storage
+        function loadHighestScore() {
+            const highestScore = localStorage.getItem('highestScore') || 0;
+            highestScoreElement.textContent = highestScore;
+        }
 
         function createBoard() {
             boardElement.innerHTML = '';
@@ -284,6 +294,7 @@
             timeLeft = 30;
             scoreElement.textContent = score;
             timerElement.textContent = timeLeft;
+            loadHighestScore(); // Load highest score at the start of the game
 
             tileInterval = setInterval(() => {
                 showTiles();
@@ -293,9 +304,18 @@
                 } else {
                     clearInterval(tileInterval);
                     showToast('Time is up! Your score: ');
+                    saveHighestScore();
                     resetGame();
                 }
             }, 1000); // Show tiles every second
+        }
+
+        function saveHighestScore() {
+            const highestScore = localStorage.getItem('highestScore') || 0;
+            if (score > highestScore) {
+                localStorage.setItem('highestScore', score);
+                loadHighestScore();
+            }
         }
 
         function resetGame() {
@@ -323,6 +343,7 @@
             tileCount = parseInt(tileCountSelect.value);
         });
 
+        loadHighestScore();
         createBoard();
     </script>
 </body>
