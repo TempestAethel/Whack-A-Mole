@@ -81,24 +81,20 @@
             align-items: center;
             margin-bottom: 20px;
         }
-        #grid-size {
+        #grid-size, #mole-count {
             margin-bottom: 10px;
             padding: 10px;
             font-size: 16px;
         }
         @keyframes scoreAnimation {
-            animation: scoreAnim 0.5s forwards;
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); color: #00ff00; }
+            100% { transform: scale(1); color: white; }
         }
         @keyframes wrongClickAnimation {
-            animation: wrongAnim 0.5s forwards;
-        }
-        @keyframes scoreAnim {
-            from { transform: scale(1); }
-            to { transform: scale(1.2); color: #00ff00; }
-        }
-        @keyframes wrongAnim {
-            from { transform: scale(1); }
-            to { transform: scale(0.8); color: #ff0000; }
+            0% { transform: scale(1); }
+            50% { transform: scale(0.8); color: #ff0000; }
+            100% { transform: scale(1); color: white; }
         }
     </style>
 </head>
@@ -110,6 +106,13 @@
                 <option value="4">4x4</option>
                 <option value="5">5x5</option>
                 <option value="6">6x6</option>
+            </select>
+            <select id="mole-count">
+                <option value="1">1 Mole</option>
+                <option value="2">2 Moles</option>
+                <option value="3">3 Moles</option>
+                <option value="4">4 Moles</option>
+                <option value="5">5 Moles</option>
             </select>
             <button id="play-button">Play</button>
         </div>
@@ -129,12 +132,14 @@
         const playButton = document.getElementById('play-button');
         const resetButton = document.getElementById('reset-button');
         const gridSizeSelect = document.getElementById('grid-size');
+        const moleCountSelect = document.getElementById('mole-count');
         const menu = document.getElementById('menu');
         const game = document.getElementById('game');
         let score = 0;
         let timeLeft = 30; // 30 seconds for the game
         let moleInterval;
         let boardSize = parseInt(gridSizeSelect.value);
+        let moleCount = parseInt(moleCountSelect.value);
 
         function createBoard() {
             boardElement.innerHTML = '';
@@ -160,15 +165,18 @@
             }
         }
 
-        function showMole() {
+        function showMoles() {
             const moles = document.querySelectorAll('.mole');
             moles.forEach(mole => mole.classList.remove('active'));
-            const randomMole = moles[Math.floor(Math.random() * moles.length)];
-            randomMole.classList.add('active');
+            for (let i = 0; i < moleCount; i++) {
+                const randomMole = moles[Math.floor(Math.random() * moles.length)];
+                randomMole.classList.add('active');
+            }
         }
 
         function startGame() {
             boardSize = parseInt(gridSizeSelect.value);
+            moleCount = parseInt(moleCountSelect.value);
             createBoard();
             menu.classList.remove('active');
             game.classList.add('active');
@@ -178,7 +186,7 @@
             timerElement.textContent = timeLeft;
 
             moleInterval = setInterval(() => {
-                showMole();
+                showMoles();
                 if (timeLeft > 0) {
                     timeLeft--;
                     timerElement.textContent = timeLeft;
@@ -187,7 +195,7 @@
                     alert('Time is up! Your score: ' + score);
                     resetGame();
                 }
-            }, 1000); // Show a mole every second
+            }, 1000); // Show moles every second
         }
 
         function resetGame() {
@@ -203,6 +211,9 @@
         playButton.addEventListener('click', startGame);
         resetButton.addEventListener('click', resetGame);
         gridSizeSelect.addEventListener('change', createBoard);
+        moleCountSelect.addEventListener('change', () => {
+            moleCount = parseInt(moleCountSelect.value);
+        });
 
         createBoard();
     </script>
