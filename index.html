@@ -1,349 +1,388 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Whack-a-Tile Game</title>
+    <meta charset="UTF-8"> <!-- Set character encoding for the document -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive design for mobile -->
+    <title>Whack-a-Tile Game</title> <!-- Title of the web page -->
     <style>
+        /* Style for the body of the document */
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #1c1c1c;
-            color: white;
-            font-family: Arial, sans-serif;
-            overflow: hidden;
+            display: flex; /* Use flexbox layout */
+            flex-direction: column; /* Stack children vertically */
+            align-items: center; /* Center children horizontally */
+            justify-content: center; /* Center children vertically */
+            height: 100vh; /* Full viewport height */
+            background-color: #1c1c1c; /* Dark background color */
+            color: white; /* White text color */
+            font-family: Arial, sans-serif; /* Font family */
+            overflow: hidden; /* Hide overflow content */
         }
+        /* Style for the main heading */
         h1 {
-            margin-bottom: 20px;
-            font-size: 36px;
-            background: linear-gradient(to right, #00ffff, #008080);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.6);
-            transition: text-shadow 0.3s;
+            margin-bottom: 20px; /* Space below the heading */
+            font-size: 36px; /* Font size */
+            background: linear-gradient(to right, #00ffff, #008080); /* Gradient background */
+            -webkit-background-clip: text; /* Clip background to text */
+            -webkit-text-fill-color: transparent; /* Make text fill transparent */
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.6); /* Text shadow for glow effect */
+            transition: text-shadow 0.3s; /* Smooth transition for text shadow */
         }
+        /* Style for the heading when hovered */
         h1:hover {
-            text-shadow: 0 0 20px rgba(0, 255, 255, 1), 0 0 40px rgba(0, 255, 255, 0.8);
+            text-shadow: 0 0 20px rgba(0, 255, 255, 1), 0 0 40px rgba(0, 255, 255, 0.8); /* Stronger glow on hover */
         }
+        /* Style for the game board */
         .board {
-            display: grid;
-            grid-gap: 10px;
-            margin-bottom: 20px;
+            display: grid; /* Use grid layout */
+            grid-gap: 10px; /* Space between grid items */
+            margin-bottom: 20px; /* Space below the board */
         }
+        /* Style for individual tiles */
         .tile {
-            width: 100px;
-            height: 100px;
-            border-radius: 10px;
-            background-color: #555;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-            cursor: pointer;
-            transition: transform 0.1s ease, background-color 0.1s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            width: 100px; /* Width of the tile */
+            height: 100px; /* Height of the tile */
+            border-radius: 10px; /* Rounded corners */
+            background-color: #555; /* Background color */
+            display: flex; /* Use flexbox for centering content */
+            align-items: center; /* Center content vertically */
+            justify-content: center; /* Center content horizontally */
+            font-size: 24px; /* Font size for tile content */
+            color: white; /* Text color */
+            cursor: pointer; /* Change cursor on hover */
+            transition: transform 0.1s ease, background-color 0.1s ease; /* Smooth transitions */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Shadow effect */
         }
+        /* Style for active tiles */
         .tile.active {
-            background: linear-gradient(135deg, #00cc00, #00ff00);
+            background: linear-gradient(135deg, #00cc00, #00ff00); /* Gradient background for active tiles */
         }
+        /* Style for correct clicks on tiles */
         .tile.correct {
-            transform: scale(1.1);
-            background: linear-gradient(135deg, #00cc00, #00ff00);
+            transform: scale(1.1); /* Slightly enlarge the tile */
+            background: linear-gradient(135deg, #00cc00, #00ff00); /* Gradient background */
         }
+        /* Style for wrong clicks on tiles */
         .tile.wrong {
-            transform: scale(1.1);
-            background-color: #ff0000;
+            transform: scale(1.1); /* Slightly enlarge the tile */
+            background-color: #ff0000; /* Red background for wrong clicks */
         }
+        /* Style for score, timer, and high score displays */
         .score, #timer, .high-score {
-            font-size: 24px;
-            text-align: center;
+            font-size: 24px; /* Font size */
+            text-align: center; /* Center align text */
         }
+        /* Hide menu, game, and modal by default */
         .menu, .game, .modal {
-            display: none;
+            display: none; /* Hidden by default */
         }
+        /* Show menu and game when active */
         .menu.active, .game.active {
-            display: block;
+            display: block; /* Display block when active */
         }
+        /* Style for buttons */
         #play-button, #reset-button, #info-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s, box-shadow 0.3s;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            margin: 5px;
+            padding: 10px 20px; /* Button padding */
+            font-size: 16px; /* Font size */
+            color: white; /* Text color */
+            border: none; /* No border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Change cursor on hover */
+            transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transitions */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Shadow effect */
+            margin: 5px; /* Margin around buttons */
         }
+        /* Style for the play button */
         #play-button {
-            background-color: #00cc00;
+            background-color: #00cc00; /* Green background */
         }
+        /* Style for play button hover effect */
         #play-button:hover {
-            background-color: #00ff00;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            background-color: #00ff00; /* Lighter green on hover */
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5); /* Glow effect on hover */
         }
+        /* Style for the reset button */
         #reset-button {
-            background-color: #ff4500;
-            margin-top: 20px;
+            background-color: #ff4500; /* Orange background */
+            margin-top: 20px; /* Margin above reset button */
         }
+        /* Style for reset button hover effect */
         #reset-button:hover {
-            background-color: #ff6347;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            background-color: #ff6347; /* Lighter orange on hover */
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); /* Glow effect on hover */
         }
+        /* Style for the info button */
         #info-button {
-            background-color: #007bff;
-            margin-top: 10px;
+            background-color: #007bff; /* Blue background */
+            margin-top: 10px; /* Margin above info button */
         }
+        /* Style for info button hover effect */
         #info-button:hover {
-            background-color: #0056b3;
-            box-shadow: 0 0 20px rgba(0, 123, 255, 0.5);
+            background-color: #0056b3; /* Darker blue on hover */
+            box-shadow: 0 0 20px rgba(0, 123, 255, 0.5); /* Glow effect on hover */
         }
+        /* Style for controls container */
         .controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 20px;
+            display: flex; /* Use flexbox */
+            flex-direction: column; /* Stack children vertically */
+            align-items: center; /* Center children horizontally */
+            margin-bottom: 20px; /* Space below controls */
         }
+        /* Style for grid size and tile count selectors */
         #grid-size, #tile-count {
-            margin-bottom: 10px;
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            background-color: #333;
-            color: white;
-            transition: border 0.3s;
+            margin-bottom: 10px; /* Space below selectors */
+            padding: 10px; /* Padding */
+            font-size: 16px; /* Font size */
+            border-radius: 5px; /* Rounded corners */
+            border: 1px solid #ccc; /* Light border */
+            background-color: #333; /* Dark background */
+            color: white; /* Text color */
+            transition: border 0.3s; /* Smooth border transition */
         }
+        /* Style for focused grid size and tile count selectors */
         #grid-size:focus, #tile-count:focus {
-            outline: none;
-            border: 1px solid #00ffff;
+            outline: none; /* Remove outline */
+            border: 1px solid #00ffff; /* Bright border when focused */
         }
+        /* Style for toast notifications */
         .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 150, 0, 0.8);
-            color: white;
-            padding: 15px 30px;
-            border-radius: 5px;
-            opacity: 0;
-            transition: opacity 0.5s;
-            z-index: 1000;
+            position: fixed; /* Fixed position */
+            bottom: 20px; /* Distance from bottom */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Adjust position to center */
+            background-color: rgba(0, 150, 0, 0.8); /* Semi-transparent green background */
+            color: white; /* Text color */
+            padding: 15px 30px; /* Padding */
+            border-radius: 5px; /* Rounded corners */
+            opacity: 0; /* Hidden by default */
+            transition: opacity 0.5s; /* Smooth opacity transition */
+            z-index: 1000; /* Layering order */
         }
+        /* Style for modal dialog */
         .modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
-            z-index: 1001;
-            display: none;
-            flex-direction: column;
-            align-items: center;
+            position: fixed; /* Fixed position */
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Adjust position to center */
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent dark background */
+            color: white; /* Text color */
+            padding: 20px; /* Padding */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); /* Glow effect */
+            z-index: 1001; /* Layering order above toast */
+            display: none; /* Hidden by default */
+            flex-direction: column; /* Stack children vertically */
+            align-items: center; /* Center children horizontally */
         }
+        /* Style for active modal */
         .modal.active {
-            display: flex;
+            display: flex; /* Display flex when active */
         }
+        /* Style for modal heading */
         .modal h2 {
-            margin-bottom: 15px;
-            color: #00ffff;
+            margin-bottom: 15px; /* Space below heading */
+            color: #00ffff; /* Cyan text color */
         }
+        /* Style for modal paragraphs */
         .modal p {
-            margin: 5px 0;
+            margin: 5px 0; /* Vertical margin */
         }
+        /* Style for modal buttons */
         .modal button {
-            margin-top: 15px;
+            margin-top: 15px; /* Space above button */
         }
     </style>
 </head>
 <body>
-    <h1>Whack-a-Tile!</h1>
-    <div class="menu active" id="menu">
-        <div class="controls">
-            <select id="grid-size">
-                <option value="4">4x4</option>
-                <option value="5">5x5</option>
-                <option value="6">6x6</option>
+    <h1>Whack-a-Tile!</h1> <!-- Game title -->
+    <div class="menu active" id="menu"> <!-- Menu container -->
+        <div class="controls"> <!-- Controls for starting the game -->
+            <select id="grid-size"> <!-- Dropdown for grid size selection -->
+                <option value="4">4x4</option> <!-- Option for 4x4 grid -->
+                <option value="5">5x5</option> <!-- Option for 5x5 grid -->
+                <option value="6">6x6</option> <!-- Option for 6x6 grid -->
             </select>
-            <select id="tile-count">
-                <option value="1">1 Tile</option>
-                <option value="2">2 Tiles</option>
-                <option value="3">3 Tiles</option>
-                <option value="4">4 Tiles</option>
-                <option value="5">5 Tiles</option>
+            <select id="tile-count"> <!-- Dropdown for tile count selection -->
+                <option value="1">1 Tile</option> <!-- Option for 1 tile -->
+                <option value="2">2 Tiles</option> <!-- Option for 2 tiles -->
+                <option value="3">3 Tiles</option> <!-- Option for 3 tiles -->
+                <option value="4">4 Tiles</option> <!-- Option for 4 tiles -->
+                <option value="5">5 Tiles</option> <!-- Option for 5 tiles -->
             </select>
-            <button id="play-button">Play</button>
-            <button id="info-button">Info</button>
+            <button id="play-button">Play</button> <!-- Button to start the game -->
+            <button id="info-button">Info</button> <!-- Button to show instructions -->
         </div>
     </div>
-    <div class="game" id="game">
-        <div class="score">Score: <span id="score">0</span></div>
-        <div id="timer">Time: <span id="time">30</span> seconds</div>
-        <div class="board" id="board"></div>
-        <div class="high-score">Highest Score: <span id="highest-score">0</span> (Mode: <span id="highest-mode">N/A</span>)</div>
-        <div class="reset-container" style="display: flex; justify-content: center;">
-            <button id="reset-button">Reset Game</button>
+    <div class="game" id="game"> <!-- Game container -->
+        <div class="score">Score: <span id="score">0</span></div> <!-- Display for current score -->
+        <div id="timer">Time: <span id="time">30</span> seconds</div> <!-- Display for timer -->
+        <div class="board" id="board"></div> <!-- Container for game tiles -->
+        <div class="high-score">Highest Score: <span id="highest-score">0</span> (Mode: <span id="highest-mode">N/A</span>)</div> <!-- Display for highest score -->
+        <div class="reset-container" style="display: flex; justify-content: center;"> <!-- Flex container for reset button -->
+            <button id="reset-button">Reset Game</button> <!-- Button to reset the game -->
         </div>
     </div>
-    <div class="toast" id="toast"></div>
-    <div class="modal" id="info-modal">
-        <h2>Game Instructions</h2>
-        <p>Score points by clicking on the active tiles.</p>
-        <p>Each correct click increases your score by the number of tiles.</p>
-        <p>Each wrong click decreases your score by 1.</p>
-        <p>You have 30 seconds to score as many points as possible!</p>
-        <p>Select the grid size and number of tiles before starting.</p>
-        <button id="close-modal">Close</button>
+    <div class="toast" id="toast"></div> <!-- Toast notification for messages -->
+    <div class="modal" id="info-modal"> <!-- Modal for game instructions -->
+        <h2>Game Instructions</h2> <!-- Modal title -->
+        <p>Score points by clicking on the active tiles.</p> <!-- Instructions -->
+        <p>Each correct click increases your score by Number of tiles.</p> <!-- More instructions -->
+        <p>Each wrong click decreases your score by 1.</p> <!-- More instructions -->
+        <p>You have 30 seconds to score as many points as possible!</p> <!-- Time limit -->
+        <p>Select the grid size and number of tiles before starting.</p> <!-- Setup instructions -->
+        <button id="close-modal">Close</button> <!-- Button to close the modal -->
     </div>
     <script>
-        const boardElement = document.getElementById('board');
-        const scoreElement = document.getElementById('score');
-        const timerElement = document.getElementById('time');
-        const playButton = document.getElementById('play-button');
-        const resetButton = document.getElementById('reset-button');
-        const gridSizeSelect = document.getElementById('grid-size');
-        const tileCountSelect = document.getElementById('tile-count');
-        const menu = document.getElementById('menu');
-        const game = document.getElementById('game');
-        const toast = document.getElementById('toast');
-        const infoModal = document.getElementById('info-modal');
-        const closeModalButton = document.getElementById('close-modal');
-        const infoButton = document.getElementById('info-button');
-        const highestScoreElement = document.getElementById('highest-score');
-        const highestModeElement = document.getElementById('highest-mode');
-        let score = 0;
-        let timeLeft = 30; // 30 seconds for the game
-        let tileInterval;
-        let boardSize = parseInt(gridSizeSelect.value);
-        let tileCount = parseInt(tileCountSelect.value);
-        let scoreMultiplier = 1;
+        // Element references
+        const boardElement = document.getElementById('board'); // Reference to the game board
+        const scoreElement = document.getElementById('score'); // Reference to the score display
+        const timerElement = document.getElementById('time'); // Reference to the timer display
+        const playButton = document.getElementById('play-button'); // Reference to the play button
+        const resetButton = document.getElementById('reset-button'); // Reference to the reset button
+        const gridSizeSelect = document.getElementById('grid-size'); // Reference to the grid size dropdown
+        const tileCountSelect = document.getElementById('tile-count'); // Reference to the tile count dropdown
+        const menu = document.getElementById('menu'); // Reference to the menu container
+        const game = document.getElementById('game'); // Reference to the game container
+        const toast = document.getElementById('toast'); // Reference to the toast notification
+        const infoModal = document.getElementById('info-modal'); // Reference to the instructions modal
+        const closeModalButton = document.getElementById('close-modal'); // Reference to the close modal button
+        const infoButton = document.getElementById('info-button'); // Reference to the info button
+        const highestScoreElement = document.getElementById('highest-score'); // Reference to highest score display
+        const highestModeElement = document.getElementById('highest-mode'); // Reference to highest mode display
 
-        // Load highest score and mode from local storage
+        // Variables for game state
+        let score = 0; // Current score
+        let timeLeft = 30; // Time left in seconds
+        let tileInterval; // Interval ID for showing tiles
+        let boardSize = parseInt(gridSizeSelect.value); // Current board size
+        let tileCount = parseInt(tileCountSelect.value); // Current number of active tiles
+        let scoreMultiplier = 1; // Multiplier for score based on active tiles
+
+        // Function to load highest score and mode from local storage
         function loadHighestScore() {
-            const highestScore = localStorage.getItem('highestScore') || 0;
-            const highestMode = localStorage.getItem('highestMode') || "N/A";
-            highestScoreElement.textContent = highestScore;
-            highestModeElement.textContent = highestMode;
+            const highestScore = localStorage.getItem('highestScore') || 0; // Get highest score or default to 0
+            const highestMode = localStorage.getItem('highestMode') || "N/A"; // Get highest mode or default to N/A
+            highestScoreElement.textContent = highestScore; // Display highest score
+            highestModeElement.textContent = highestMode; // Display highest mode
         }
 
+        // Function to create the game board
         function createBoard() {
-            boardElement.innerHTML = '';
-            boardElement.style.gridTemplateColumns = `repeat(${boardSize}, 100px)`;
-            for (let i = 0; i < boardSize * boardSize; i++) {
-                const tile = document.createElement('div');
-                tile.className = 'tile';
-                tile.addEventListener('click', () => whackTile(tile));
-                boardElement.appendChild(tile);
+            boardElement.innerHTML = ''; // Clear previous tiles
+            boardElement.style.gridTemplateColumns = `repeat(${boardSize}, 100px)`; // Set grid columns based on size
+            for (let i = 0; i < boardSize * boardSize; i++) { // Loop to create each tile
+                const tile = document.createElement('div'); // Create a new tile
+                tile.className = 'tile'; // Set tile class
+                tile.addEventListener('click', () => whackTile(tile)); // Add click event listener
+                boardElement.appendChild(tile); // Append tile to the board
             }
         }
 
+        // Function to handle tile click
         function whackTile(tile) {
-            if (tile.classList.contains('active')) {
-                score += scoreMultiplier;
-                scoreElement.textContent = score;
-                tile.classList.remove('active');
+            if (tile.classList.contains('active')) { // Check if tile is active
+                score += scoreMultiplier; // Increase score by multiplier
+                scoreElement.textContent = score; // Update score display
+                tile.classList.remove('active'); // Remove active class from tile
                 
-                // Correct click animation
-                tile.classList.add('correct');
-                setTimeout(() => tile.classList.remove('correct'), 300);
+                // Animation for correct click
+                tile.classList.add('correct'); // Add correct class for animation
+                setTimeout(() => tile.classList.remove('correct'), 300); // Remove class after animation
             } else {
-                score--;
-                scoreElement.textContent = score;
+                score--; // Decrease score for wrong click
+                scoreElement.textContent = score; // Update score display
                 
-                // Wrong click animation
-                tile.classList.add('wrong');
-                setTimeout(() => tile.classList.remove('wrong'), 300);
+                // Animation for wrong click
+                tile.classList.add('wrong'); // Add wrong class for animation
+                setTimeout(() => tile.classList.remove('wrong'), 300); // Remove class after animation
             }
         }
 
+        // Function to show active tiles on the board
         function showTiles() {
-            const tiles = document.querySelectorAll('.tile');
-            tiles.forEach(tile => tile.classList.remove('active'));
-            for (let i = 0; i < tileCount; i++) {
-                const randomTile = tiles[Math.floor(Math.random() * tiles.length)];
-                randomTile.classList.add('active');
+            const tiles = document.querySelectorAll('.tile'); // Select all tiles
+            tiles.forEach(tile => tile.classList.remove('active')); // Remove active class from all tiles
+            for (let i = 0; i < tileCount; i++) { // Loop to activate random tiles
+                const randomTile = tiles[Math.floor(Math.random() * tiles.length)]; // Pick a random tile
+                randomTile.classList.add('active'); // Add active class to the selected tile
             }
         }
 
+        // Function to display toast messages
         function showToast(message) {
-            toast.textContent = message + ' Your score: ' + score;
-            toast.style.opacity = 1;
+            toast.textContent = message + ' Your score: ' + score; // Set toast message
+            toast.style.opacity = 1; // Make toast visible
             setTimeout(() => {
-                toast.style.opacity = 0;
+                toast.style.opacity = 0; // Fade out toast after 3 seconds
             }, 3000);
         }
 
+        // Function to start the game
         function startGame() {
-            boardSize = parseInt(gridSizeSelect.value);
-            tileCount = parseInt(tileCountSelect.value);
-            scoreMultiplier = tileCount; // Set score multiplier based on the number of tiles
-            createBoard();
-            menu.classList.remove('active');
-            game.classList.add('active');
-            score = 0;
-            timeLeft = 30;
-            scoreElement.textContent = score;
-            timerElement.textContent = timeLeft;
-            loadHighestScore(); // Load highest score at the start of the game
+            boardSize = parseInt(gridSizeSelect.value); // Get current grid size
+            tileCount = parseInt(tileCountSelect.value); // Get current tile count
+            scoreMultiplier = tileCount; // Set score multiplier based on tile count
+            createBoard(); // Create the game board
+            menu.classList.remove('active'); // Hide the menu
+            game.classList.add('active'); // Show the game area
+            score = 0; // Reset score
+            timeLeft = 30; // Reset timer
+            scoreElement.textContent = score; // Update score display
+            timerElement.textContent = timeLeft; // Update timer display
+            loadHighestScore(); // Load highest score at game start
 
+            // Interval to show tiles and update timer
             tileInterval = setInterval(() => {
-                showTiles();
-                if (timeLeft > 0) {
-                    timeLeft--;
-                    timerElement.textContent = timeLeft;
+                showTiles(); // Show active tiles
+                if (timeLeft > 0) { // Check if time is still left
+                    timeLeft--; // Decrease time
+                    timerElement.textContent = timeLeft; // Update timer display
                 } else {
-                    clearInterval(tileInterval);
-                    showToast('Time is up!');
-                    saveHighestScore();
-                    resetGame();
+                    clearInterval(tileInterval); // Stop interval when time is up
+                    showToast('Time is up!'); // Show time up message
+                    saveHighestScore(); // Save highest score if applicable
+                    resetGame(); // Reset game state
                 }
-            }, 1000); // Show tiles every second
+            }, 1000); // Run every second
         }
 
+        // Function to save the highest score to local storage
         function saveHighestScore() {
-            const highestScore = localStorage.getItem('highestScore') || 0;
-            if (score > highestScore) {
-                localStorage.setItem('highestScore', score);
-                localStorage.setItem('highestMode', tileCount + ' Tiles');
-                loadHighestScore();
+            const highestScore = localStorage.getItem('highestScore') || 0; // Get current highest score
+            if (score > highestScore) { // Check if current score is greater than highest score
+                localStorage.setItem('highestScore', score); // Update highest score in local storage
+                localStorage.setItem('highestMode', tileCount + ' Tiles'); // Update highest mode
+                loadHighestScore(); // Refresh displayed highest score
             }
         }
 
+        // Function to reset the game state
         function resetGame() {
-            menu.classList.add('active');
-            game.classList.remove('active');
-            clearInterval(tileInterval);
-            score = 0;
-            timeLeft = 30;
-            scoreElement.textContent = score;
-            timerElement.textContent = timeLeft;
+            menu.classList.add('active'); // Show the menu
+            game.classList.remove('active'); // Hide the game area
+            clearInterval(tileInterval); // Clear tile showing interval
+            score = 0; // Reset score
+            timeLeft = 30; // Reset timer
+            scoreElement.textContent = score; // Update score display
+            timerElement.textContent = timeLeft; // Update timer display
         }
 
         // Modal functionality
         infoButton.addEventListener('click', () => {
-            infoModal.classList.add('active');
+            infoModal.classList.add('active'); // Show info modal
         });
         closeModalButton.addEventListener('click', () => {
-            infoModal.classList.remove('active');
+            infoModal.classList.remove('active'); // Hide info modal
         });
 
-        playButton.addEventListener('click', startGame);
-        resetButton.addEventListener('click', resetGame);
-        gridSizeSelect.addEventListener('change', createBoard);
+        playButton.addEventListener('click', startGame); // Start game on play button click
+        resetButton.addEventListener('click', resetGame); // Reset game on reset button click
+        gridSizeSelect.addEventListener('change', createBoard); // Recreate board on grid size change
         tileCountSelect.addEventListener('change', () => {
-            tileCount = parseInt(tileCountSelect.value);
+            tileCount = parseInt(tileCountSelect.value); // Update tile count on change
         });
 
-        loadHighestScore();
-        createBoard();
+        loadHighestScore(); // Load highest score on page load
+        createBoard(); // Create initial board on page load
     </script>
 </body>
 </html>
