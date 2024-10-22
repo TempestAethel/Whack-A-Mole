@@ -197,7 +197,7 @@
     <div class="modal" id="info-modal">
         <h2>Game Instructions</h2>
         <p>Score points by clicking on the active tiles.</p>
-        <p>Each correct click increases your score by Number of tiles.</p>
+        <p>Each correct click increases your score by the number of tiles.</p>
         <p>Each wrong click decreases your score by 1.</p>
         <p>You have 30 seconds to score as many points as possible!</p>
         <p>Select the grid size and number of tiles before starting.</p>
@@ -214,7 +214,6 @@
         const menu = document.getElementById('menu');
         const game = document.getElementById('game');
         const toast = document.getElementById('toast');
-        const scoreMultiplierElement = document.getElementById('score-multiplier');
         const infoModal = document.getElementById('info-modal');
         const closeModalButton = document.getElementById('close-modal');
         const infoButton = document.getElementById('info-button');
@@ -286,7 +285,6 @@
             boardSize = parseInt(gridSizeSelect.value);
             tileCount = parseInt(tileCountSelect.value);
             scoreMultiplier = tileCount; // Set score multiplier based on the number of tiles
-            scoreMultiplierElement.textContent = scoreMultiplier;
             createBoard();
             menu.classList.remove('active');
             game.classList.add('active');
